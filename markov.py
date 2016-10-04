@@ -47,7 +47,11 @@ def make_text(chains):
     """Takes dictionary of markov chains; returns random text."""
 
     text = ""
-    current_tuple = choice(chains.keys())
+
+    for tuple_keys in chains.keys():
+        if tuple_keys[0][0].isupper():
+            current_tuple = tuple_keys
+            break
 
     while True:
         # print current_tuple
