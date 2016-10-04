@@ -13,7 +13,7 @@ def open_and_read_file(file_path):
     with open(file_path) as open_file: 
         return open_file.read()
 
-def make_chains(text_string):
+def make_chains(text_string, n):
     """Takes input text as string; returns _dictionary_ of markov chains.
 
     A chain will be a key that consists of a tuple of (word1, word2)
@@ -31,12 +31,14 @@ def make_chains(text_string):
     words = text_string.split()
 
     for index, word in enumerate(words):
-        if words[index + 1]:
-            bigram = (word, words[index+1])
-            chains[bigram] = chains.get(bigram, [])
+        if len(words[index: index + n]) == n:
+            ngram = tuple([word for word in words[index:index + n]])
+            chains[ngram] = chains.get(ngram, [])
+            # print ngram, "pass 3"
             try:
-                words[index + 2]
-                chains[bigram].append(words[index + 2])
+                words[index + n]
+                # print words[index + n]
+                chains[ngram].append(words[index + n])
             except IndexError:
                 return chains
 
@@ -48,12 +50,14 @@ def make_text(chains):
     current_tuple = choice(chains.keys())
 
     while True:
+        # print current_tuple
         text += "{} ".format(current_tuple[0])
         if chains.get(current_tuple):
             next_word = choice(chains[current_tuple])  # might not exist might be empty list
-            current_tuple = (current_tuple[1], next_word)
+            current_tuple = current_tuple[1:] + tuple([next_word])
         else:
-            text += "{} ".format(current_tuple[1])
+            for tuple_word in current_tuple[1:]:
+                text += "{} ".format(tuple_word)
             return text
 
 
@@ -63,8 +67,8 @@ input_path = argv[1]
 input_text = open_and_read_file(input_path)
 
 # Get a Markov chain
-chains = make_chains(input_text)
-#print chains
+chains = make_chains(input_text, 4)
+# print "Chains is: ", chains
 
 # Produce random text
 random_text = make_text(chains)
