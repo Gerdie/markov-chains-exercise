@@ -48,13 +48,14 @@ def make_text(chains):
     """Takes dictionary of markov chains; returns random text."""
 
     text = ""
+    unstarted = True
 
-    while True:
+    while unstarted:
         current_tuple = choice(chains.keys())
         if current_tuple[0][0].isupper():
-            break
+            unstarted = False
 
-    while True:
+    while current_tuple:
         text += current_tuple[0] + " "
         if chains.get(current_tuple) and current_tuple[-1][-1] not in "!.?\"\'":
             next_word = choice(chains[current_tuple])
